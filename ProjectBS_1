@@ -1,8 +1,141 @@
 #include <iostream>
 
+class Option {
+protected:
+    double _expiry;
 
-int main() 
+public:
+    Option(double expiry) : _expiry(expiry) {}
+
+    double getExpiry() const { return _expiry; }
+
+    virtual double payoff(double) const = 0;
+
+};
+
+class VanillaOption : public Option {
+private:
+    double _strike;
+
+public:
+    enum class optionType { call, put };
+
+    VanillaOption(double expiry, double strike)
+        : Option(expiry), _strike(strike) {
+        if (expiry < 0 || strike < 0) {
+            throw std::invalid_argument("Error : Expiry and strike must be positive double ");
+        }
+    }
+
+    virtual optionType GetOptionType() const = 0;
+
+    class CallOption;
+    class PutOption;
+    friend class BlackScholesPricer;
+};
+
+class VanillaOption::CallOption : public VanillaOption {
+public:
+    CallOption(double expiry, double strike)
+        : VanillaOption(expiry, strike) {}
+
+    double payoff(double underlyingPrice) const override {
+        return std::max(underlyingPrice - _strike, 0.0);
+    }
+
+    optionType GetOptionType() const override {
+        return optionType::call;
+    }
+};
+
+class VanillaOption::PutOption : public VanillaOption {
+public:
+    PutOption(double expiry, double strike)
+        : VanillaOption(expiry, strike) {}
+
+    double payoff(double underlyingPrice) const override {
+        return std::max(_strike - underlyingPrice, 0.0);
+    }
+
+    optionType GetOptionType() const override {
+        return optionType::put;
+    }
+};
+
+double d1(const double& S, double& K, double& r, double& v, double& T) {
+    return (log(S / K) + (r + v * v / 2) * T) / (v * sqrt(T));
+}
+double d2(const double& S, double& K, double& r, double& v, double& T) {
+    return d1(S, K, r, v, T) - v * sqrt(T);
+}
+
+ 
+class BlackScholesPricer {
+private:
+    VanillaOption* _option;
+    double _asset_price;
+    double _interest_rate;
+    double _volatility;
+
+
+public:
+    BlackScholesPricer(VanillaOption* option, double asset_price, double interest_rate, double volatility)
+        : _option(option), _asset_price(asset_price), _interest_rate(interest_rate), _volatility(volatility) { }
+
+    double operator()() const {
+        double T = _option->getExpiry();
+        double K = _option->_strike;
+        double S = _asset_price;
+        double r = _interest_rate;
+        double v = _volatility;
+
+        if (_option->GetOptionType() == VanillaOption::optionType::call) {
+            return S * 0.5 * std::erfc(-d1( S, K, r, v, T) / sqrt(2.0)) - K * exp(-r * T) * 0.5 * std::erfc(-d2( S, K, r, v, T) / sqrt(2.0));
+        }
+        else {
+            return -S * 0.5 * std::erfc(d1( S, K, r, v, T) / sqrt(2.0)) + K * exp(-r * T) * 0.5 * std::erfc(d2(S, K, r, v, T) / sqrt(2.0));
+        }
+
+    }
+    double delta() const {
+        double T = _option->getExpiry();
+        double K = _option->_strike;
+        double S = _asset_price;
+        double r = _interest_rate;
+        double v = _volatility;
+
+        if (_option->GetOptionType() == VanillaOption::optionType::call) {
+            return 0.5 * std::erfc(-d1(S, K, r, v, T) / sqrt(2.0));
+        }
+        else {
+            return 0.5 * std::erfc(d1(S, K, r, v, T) / sqrt(2.0))-1;
+        }
+
+    }
+
+};
+
+
+int main()
 {
-    std::cout<<"Hello World !";
+    double S = 100.0;// Asset price
+    double K = 110.0;// Strike price
+    double r = 0.05;// Risk-free rate (5%)
+    double v = 0.2;// Volatility of the underlying (20%)
+    double T = 2.0;// 2 year until expiry
 
+    VanillaOption::CallOption callOption(T, K);
+    VanillaOption::PutOption putOption(T, K);
+
+    BlackScholesPricer callPricer(&callOption, S, r, v);
+    BlackScholesPricer putPricer(&putOption, S, r, v);
+
+    std::cout << "Call Price: " << callPricer() << std::endl;
+    std::cout << "Put Price: " << putPricer() << std::endl;
+
+
+    std::cout << "Call Delta: " << callPricer.delta() << std::endl;
+    std::cout << "Put Delta: " << putPricer.delta() << std::endl;
+
+    return 0;
 }
