@@ -17,4 +17,4 @@ public:
     virtual bool getExercise(int n, int i);
 };
 
-#endif // OPTION_H
+#endif

@@ -8,4 +8,4 @@ public:
     EuropeanOption(double expiry);
 };
 
-#endif // EUROPEANOPTION_H
+#endif

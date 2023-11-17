@@ -9,4 +9,4 @@ public:
     bool getExercise(int n, int i) override;
 };
 
-#endif // AMERICANOPTION_H
+#endif

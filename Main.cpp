@@ -61,18 +61,18 @@ int main() {
     tree.display();
 
 
-    CRRPricer americanCallPricer(&callOption, 3, 55.0, 0.1, 0.05, 0.06);  // Crée un pricer pour l'option d'achat américaine
+    CRRPricer americanCallPricer(&callOption, 3, 55.0, 0.1, 0.05, 0.06);  // Créé un pricer pour l'option call américaine
 
     // Calcule le prix de l'option
     double americanCallPrice = americanCallPricer();
     std::cout << "\nAmerican Call Option Price: " << americanCallPrice << std::endl;
 
-    // Accéder aux conditions d'exercice pour l'option d'achat américaine
+    // Accéde aux conditions d'exercice pour l'option de call américaine
     BinaryTree<bool> exerciseConditions = americanCallPricer.getExerciseConditions();
 
     /*
-    EuropeanPutOption euroPutOption(1.0, 45.0);  // Crée une option de vente européenne
-    CRRPricer europeanPutPricer(&euroPutOption, 4, 40.0, 0.1, 0.05, 0.06);  // Crée un pricer pour l'option de vente européenne
+    EuropeanPutOption euroPutOption(1.0, 45.0);  // Créé une option de put européenne
+    CRRPricer europeanPutPricer(&euroPutOption, 4, 40.0, 0.1, 0.05, 0.06);  // Créé un pricer pour l'option de put européenne
 
     // Calcule le prix de l'option
     double europeanPutPrice = europeanPutPricer();
@@ -86,30 +86,30 @@ int main() {
     americanCallPricer.setDepth(5);  // Modifie la profondeur de l'arbre
     double updatedPrice = americanCallPricer();  // Recalcule le prix avec une meilleure précision
 
-    CRRPricer americanCallPricer2(&callOption, 3, 55.0, 0.06, 0.1);  // Example usage with r and volatility values
+    CRRPricer americanCallPricer2(&callOption, 3, 55.0, 0.06, 0.1);  // Exemple d'usage avec r et la volatilité
     // Calcule le prix de l'option
     americanCallPrice = americanCallPricer2();
     std::cout << "American Call Option Price: " << americanCallPrice << std::endl;
 
 
 
-    // Créez une option de vente américaine avec un prix d'exercice de 50
+    // Créé une option de put américaine avec un prix d'exercice de 50
     AmericanPutOption putOption2(1.0, 50.0);
 
-    // Affichez le payoff initial pour un prix du sous-jacent de 55
+    // Affiche le payoff initial pour un prix du sous-jacent de 55
     spotPrice = 55.0;
     std::cout << "\nPut Option Payoff at spot price " << spotPrice << " and payoff " << putOption2.payoff(spotPrice) << std::endl;
 
-    // Créez un pricer pour l'option de vente américaine
+    // Créé un pricer pour l'option de put américaine
     CRRPricer americanPutPricer(&putOption2, 3, spotPrice, 0.1, 0.05, 0.06);
 
-    // Calculez le prix de l'option (conditions d'exercice incluses)
+    // Calcule le prix de l'option (conditions d'exercice incluses)
     double americanPutPrice = americanPutPricer();
 
-    // Accédez aux conditions d'exercice pour l'option de vente américaine
+    // Accède aux conditions d'exercice pour l'option de put américaine
     exerciseConditions = americanPutPricer.getExerciseConditions();
 
-    // Affichez les conditions d'exercice dans la console
+    // Affiche les conditions d'exercice dans la console
     std::cout << "Exercise Conditions:" << std::endl;
     exerciseConditions.display();
 

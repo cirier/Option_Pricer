@@ -4,7 +4,6 @@
 #include <vector>
 #include <stdexcept>
 
-// Template class BinaryTree
 template <typename T>
 class BinaryTree {
 private:
@@ -56,6 +55,6 @@ public:
 };
 
 
-#include "BinaryTree.cpp"  // Inclusion des définitions de template
+#include "BinaryTree.cpp" 
 
-#endif // BINARYTREE_H
+#endif

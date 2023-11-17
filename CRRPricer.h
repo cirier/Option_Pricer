@@ -26,4 +26,4 @@ public:
     void setDepth(int newDepth);
 };
 
-#endif // CRRPRICER_H
+#endif

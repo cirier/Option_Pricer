@@ -12,4 +12,4 @@ public:
     double payoff(double spotPrice) const override;
 };
 
-#endif // EUROPEANCALLOPTION_H
+#endif 
