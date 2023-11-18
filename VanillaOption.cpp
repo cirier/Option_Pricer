@@ -7,10 +7,9 @@ VanillaOption::VanillaOption(double expiry, double strike)
         throw std::invalid_argument("Error : Expiry and strike must be positive double ");
     }
 }
+double VanillaOption::getStrike() const { return _strike; }
 
-VanillaOption::optionType VanillaOption::GetOptionType() const {
-	return optionType::call;
-}
+
 
 
 

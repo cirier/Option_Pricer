@@ -10,8 +10,10 @@ private:
 public:
     enum class optionType { call, put };
     VanillaOption(double expiry, double strike);
+    
+    double getStrike() const;
 
-    virtual optionType GetOptionType() const;
+    virtual optionType GetOptionType() const=0;
 
     friend class VanillaCallOption;
     friend class VanillaPutOption;
