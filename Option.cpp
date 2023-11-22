@@ -1,6 +1,6 @@
 #include "Option.h"
 
-Option::Option(double expiry, bool isAmerican) : _expiry(expiry), _isAmerican(isAmerican) {}
+Option::Option(double expiry, bool isAmerican = false) : _expiry(expiry), _isAmerican(isAmerican) {}
 
 double Option::getExpiry() const {
     return _expiry;
