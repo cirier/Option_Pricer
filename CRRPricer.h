@@ -21,7 +21,8 @@ public:
     CRRPricer(Option* option, int depth, double asset_price, double r, double volatility);
     void compute();
     double get(int n, int i);
-    double operator()();
+    double operator()(); // Define this method in your CRRPricer.cpp
+    double operator()(bool useExplicitFormula); // And also define this one if it's different
     BinaryTree<bool> getExerciseConditions() const;
     void setDepth(int newDepth);
 };

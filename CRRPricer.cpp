@@ -59,8 +59,22 @@ double CRRPricer::get(int n, int i) {
 }
 
 double CRRPricer::operator()() {
-    if (_tree.getNode(0, 0) == 0) {
-        compute();
+    // Example implementation - replace with your actual pricing logic
+    compute(); // Let's assume compute() calculates the price and stores it in the tree
+    return _tree.getNode(0, 0); // Assuming the price is stored at the root of the tree
+}
+
+
+double CRRPricer::operator()(bool useExplicitFormula) {
+    if (useExplicitFormula) {
+        // Implémentez ici la logique spécifique pour l'utilisation de la formule explicite
+        // Par exemple, un calcul différent ou un traitement spécial
+    }
+    else {
+        // Si useExplicitFormula est faux, exécutez le comportement standard
+        if (_tree.getNode(0, 0) == 0) {
+            compute();
+        }
     }
     return _tree.getNode(0, 0);
 }
