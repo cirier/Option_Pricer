@@ -1,117 +1,120 @@
 #include <iostream>
-#include <vector>
-#include <cmath>
-#include <stdexcept>
-#include <algorithm>
-#include "AmericanCallOption.h"
-#include "AmericanPutOption.h"
-#include "EuropeanCallOption.h"
-#include "EuropeanPutOption.h" 
-#include "BinaryTree.h"
+#include "CallOption.h"
+#include "PutOption.h"
+#include "DigitalCallOption.h"
+#include "DigitalPutOption.h"
+#include "BlackScholesPricer.h"
 #include "CRRPricer.h"
+#include "BinaryTree.h"
 
 
 int main() {
-    AmericanCallOption callOption(1.0, 50.0);
-    AmericanPutOption putOption(1.0, 50.0);
-    EuropeanCallOption euroCallOption(1.0, 50.0);
+    {
 
-    double spotPrice = 55.0;
+        double S0(95.), K(100.), T(0.5), r(0.02), sigma(0.2);
+        CallOption opt1(T, K);
+        PutOption opt2(T, K);
 
-    std::cout << "Call Option Payoff: " << callOption.payoff(spotPrice) << std::endl;
-    std::cout << "Put Option Payoff: " << putOption.payoff(spotPrice) << std::endl;
 
-    if (callOption.isAmericanOption()) {
-        std::cout << "Call Option is American." << std::endl;
+        std::cout << "European options 1" << std::endl << std::endl;
+
+        {
+            BlackScholesPricer pricer1(&opt1, S0, r, sigma);
+            std::cout << "BlackScholesPricer price=" << pricer1() << ", delta=" << pricer1.delta() << std::endl;
+
+            BlackScholesPricer pricer2(&opt2, S0, r, sigma);
+            std::cout << "BlackScholesPricer price=" << pricer2() << ", delta=" << pricer2.delta() << std::endl;
+            std::cout << std::endl;
+
+            int N(150);
+            double U = exp(sigma * sqrt(T / N)) - 1.0;
+            double D = exp(-sigma * sqrt(T / N)) - 1.0;
+            double R = exp(r * T / N) - 1.0;
+
+            CRRPricer crr_pricer1(&opt1, N, S0, U, D, R);
+            std::cout << "Calling CRR pricer with depth=" << N << std::endl;
+            std::cout << std::endl;
+            std::cout << "CRR pricer computed price=" << crr_pricer1() << std::endl;
+            std::cout << "CRR pricer explicit formula price=" << crr_pricer1(true) << std::endl;
+            std::cout << std::endl;
+
+            CRRPricer crr_pricer2(&opt2, N, S0, U, D, R);
+            std::cout << "Calling CRR pricer with depth=" << N << std::endl;
+            std::cout << std::endl;
+            std::cout << "CRR pricer computed price=" << crr_pricer2() << std::endl;
+            std::cout << "CRR pricer explicit formula price=" << crr_pricer2(true) << std::endl;
+        }
+        std::cout << std::endl << "*********************************************************" << std::endl;
     }
-    else {
-        std::cout << "Call Option is not American." << std::endl;
+
+    {
+        std::cout << "Binary Tree" << std::endl << std::endl;
+        BinaryTree<bool> t1;
+        t1.setDepth(3);
+        t1.setNode(1, 1, true);
+        t1.display();
+        t1.setDepth(5);
+        t1.display();
+        t1.setDepth(3);
+        t1.display();
+
+
+        BinaryTree<double> t2;
+        t2.setDepth(2);
+        t2.setNode(2, 1, 3.14);
+        t2.display();
+        t2.setDepth(4);
+        t2.display();
+        t2.setDepth(3);
+        t2.display();
+
+        BinaryTree<int> t3;
+        t3.setDepth(4);
+        t3.setNode(3, 0, 8);
+        t3.display();
+        t3.setDepth(2);
+        t3.display();
+        t3.setDepth(4);
+        t3.display();
+
+        std::cout << std::endl << "*********************************************************" << std::endl;
     }
 
-    if (euroCallOption.isAmericanOption()) {
-        std::cout << "European Call Option is American." << std::endl;
+    {
+
+        double S0(95.), K(100.), T(0.5), r(0.02), sigma(0.2);
+        DigitalCallOption opt1(T, K);
+        DigitalPutOption opt2(T, K);
+
+
+        std::cout << "European options 2" << std::endl << std::endl;
+
+        {
+            BlackScholesPricer pricer1(&opt1, S0, r, sigma);
+            std::cout << "BlackScholesPricer price=" << pricer1() << ", delta=" << pricer1.delta() << std::endl;
+
+            BlackScholesPricer pricer2(&opt2, S0, r, sigma);
+            std::cout << "BlackScholesPricer price=" << pricer2() << ", delta=" << pricer2.delta() << std::endl;
+            std::cout << std::endl;
+
+            int N(150);
+            double U = exp(sigma * sqrt(T / N)) - 1.0;
+            double D = exp(-sigma * sqrt(T / N)) - 1.0;
+            double R = exp(r * T / N) - 1.0;
+
+            CRRPricer crr_pricer1(&opt1, N, S0, U, D, R);
+            std::cout << "Calling CRR pricer with depth=" << N << std::endl;
+            std::cout << std::endl;
+            std::cout << "CRR pricer computed price=" << crr_pricer1() << std::endl;
+            std::cout << "CRR pricer explicit formula price=" << crr_pricer1(true) << std::endl;
+            std::cout << std::endl;
+
+            CRRPricer crr_pricer2(&opt2, N, S0, U, D, R);
+            std::cout << "Calling CRR pricer with depth=" << N << std::endl;
+            std::cout << std::endl;
+            std::cout << "CRR pricer computed price=" << crr_pricer2() << std::endl;
+            std::cout << "CRR pricer explicit formula price=" << crr_pricer2(true) << std::endl;
+        }
+        std::cout << std::endl << "*********************************************************" << std::endl;
     }
-    else {
-        std::cout << "European Call Option is not American." << std::endl;
-    }
-
-
-    BinaryTree<int> tree(2);
-    tree.setNode(0, 0, 10);
-    tree.setNode(1, 0, 20);
-    tree.setNode(1, 1, 30);
-    tree.setNode(2, 0, 40);
-    tree.setNode(2, 1, 50);
-    tree.setNode(2, 2, 60);
-
-    std::cout << "\nValues in the tree:" << std::endl;
-    tree.display();
-
-    int value = tree.getNode(1, 1);
-    std::cout << "Value at position (1, 1): " << value << std::endl;
-
-    tree.setDepth(3);
-
-    tree.setNode(3, 0, 70);
-    tree.setNode(3, 1, 80);
-    tree.setNode(3, 2, 90);
-    tree.setNode(3, 3, 100);
-
-    std::cout << "\nValues in the tree after changing depth:" << std::endl;
-    tree.display();
-
-
-    CRRPricer americanCallPricer(&callOption, 3, 55.0, 0.1, 0.05, 0.06);  // Créé un pricer pour l'option call américaine
-
-    // Calcule le prix de l'option
-    double americanCallPrice = americanCallPricer();
-    std::cout << "\nAmerican Call Option Price: " << americanCallPrice << std::endl;
-
-    // Accéde aux conditions d'exercice pour l'option de call américaine
-    BinaryTree<bool> exerciseConditions = americanCallPricer.getExerciseConditions();
-
-    /*
-    EuropeanPutOption euroPutOption(1.0, 45.0);  // Créé une option de put européenne
-    CRRPricer europeanPutPricer(&euroPutOption, 4, 40.0, 0.1, 0.05, 0.06);  // Créé un pricer pour l'option de put européenne
-
-    // Calcule le prix de l'option
-    double europeanPutPrice = europeanPutPricer();
-    std::cout << "European Put Option Price: " << europeanPutPrice << std::endl;
-    */
-    /*
-    exerciseConditions = americanCallPricer.getExerciseConditions();
-    exerciseConditions.display();  // Affiche les conditions d'exercice dans la console
-
-    */
-    americanCallPricer.setDepth(5);  // Modifie la profondeur de l'arbre
-    double updatedPrice = americanCallPricer();  // Recalcule le prix avec une meilleure précision
-
-    CRRPricer americanCallPricer2(&callOption, 3, 55.0, 0.06, 0.1);  // Exemple d'usage avec r et la volatilité
-    // Calcule le prix de l'option
-    americanCallPrice = americanCallPricer2();
-    std::cout << "American Call Option Price: " << americanCallPrice << std::endl;
-
-
-
-    // Créé une option de put américaine avec un prix d'exercice de 50
-    AmericanPutOption putOption2(1.0, 50.0);
-
-    // Affiche le payoff initial pour un prix du sous-jacent de 55
-    spotPrice = 55.0;
-    std::cout << "\nPut Option Payoff at spot price " << spotPrice << " and payoff " << putOption2.payoff(spotPrice) << std::endl;
-
-    // Créé un pricer pour l'option de put américaine
-    CRRPricer americanPutPricer(&putOption2, 3, spotPrice, 0.1, 0.05, 0.06);
-
-    // Calcule le prix de l'option (conditions d'exercice incluses)
-    double americanPutPrice = americanPutPricer();
-
-    // Accède aux conditions d'exercice pour l'option de put américaine
-    exerciseConditions = americanPutPricer.getExerciseConditions();
-
-    // Affiche les conditions d'exercice dans la console
-    std::cout << "Exercise Conditions:" << std::endl;
-    exerciseConditions.display();
-
-    return 0;
 }
