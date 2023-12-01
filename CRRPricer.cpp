@@ -12,6 +12,10 @@
 
 CRRPricer::CRRPricer(Option* option, int depth, double asset_price, double up, double down, double interest_rate)
     : _option(option), _depth(depth), _asset_price(asset_price), _up(up), _down(down), _interest_rate(interest_rate), _tree(_depth) {
+    
+    /*if (option.isAsianOption() == true) {
+        throw std::invalid_argument("Invalid parameters. Conditions: S0 > 0, U > D > -1 must be satisfied.");
+    }*/
 
     // Check for conditions: S0 > 0, U > D > -1
     if (asset_price <= 0 || up <= down || down < -1) {
@@ -82,7 +86,6 @@ double CRRPricer::factorial(int n) {
     }
 }
 
-// ATENTION VOIR AVEC PROF -> Quel est l'operateur ou changer le nom de la fonction ??
 // Function that returns the price of the option [H(0,0)]
 double CRRPricer::operator()(bool closed_form) {
     if (closed_form) {
