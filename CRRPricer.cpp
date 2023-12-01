@@ -54,7 +54,7 @@ void CRRPricer::compute() {
 
                 double q = (_interest_rate - _down) / (_up - _down);
 
-                double option_value = ((q * option_value_up) + ((1 - q) * option_value_down) / (1 + _interest_rate));
+                double option_value = ((q * option_value_up) + ((1 - q) * option_value_down)) / (1 + _interest_rate);
 
                 _tree.setNode(n, i, option_value);
             }
@@ -97,7 +97,7 @@ double CRRPricer::operator()(bool closed_form) {
 
             h += term * optionPayoff;
         }
-        h = (1 / pow(1 + _interest_rate, _depth));
+        h = (1 / pow(1 + _interest_rate, _depth))*h;
         return h;
     }
     else {
