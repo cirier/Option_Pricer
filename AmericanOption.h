@@ -5,8 +5,8 @@
 
 class AmericanOption : public Option {
 public:
-    AmericanOption(double expiry);
-    bool getExercise(int n, int i) override;
+    AmericanOption(double expiry); // Declare constructor without a body
+    bool isAmericanOption() const override; // Declare override without a body
 };
 
-#endif
+#endif // AMERICANOPTION_H

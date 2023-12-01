@@ -2,14 +2,17 @@
 #define AMERICANPUTOPTION_H
 
 #include "AmericanOption.h"
+#include <algorithm>
+
 
 class AmericanPutOption : public AmericanOption {
 private:
-    double _strike;
+    double _strike; // Strike price of the put option
 
 public:
     AmericanPutOption(double expiry, double strike);
-    double payoff(double spotPrice) const override;
+    double payoff(double stockPrice) const override;
+    
 };
 
-#endif 
+#endif // AMERICANPUTOPTION_H

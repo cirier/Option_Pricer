@@ -1,13 +1,10 @@
 #include "AmericanCallOption.h"
-
+#include <algorithm>
+// Constructor implementation (if not defined inline)
 AmericanCallOption::AmericanCallOption(double expiry, double strike)
     : AmericanOption(expiry), _strike(strike) {}
 
-double AmericanCallOption::payoff(double spotPrice) const {
-    if (spotPrice > _strike) {
-        return spotPrice - _strike;
-    }
-    else {
-        return 0.0;
-    }
+// Payoff function implementation
+double AmericanCallOption::payoff(double stockPrice) const {
+    return std::max(stockPrice - _strike, 0.0); // Payoff for a call option
 }

@@ -1,7 +1,7 @@
 #include "AmericanOption.h"
 
-AmericanOption::AmericanOption(double expiry) : Option(expiry, true) {}
+AmericanOption::AmericanOption(double expiry) : Option(expiry) {}
 
-bool AmericanOption::getExercise(int n, int i) {
+bool AmericanOption::isAmericanOption() const {
     return true;
 }
