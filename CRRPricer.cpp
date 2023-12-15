@@ -67,19 +67,27 @@ void CRRPricer::compute() {
                 double q = (_interest_rate - _down) / (_up - _down);
                 double option_value = ((q * option_value_up) + ((1 - q) * option_value_down)) / (1 + _interest_rate);
 
-                // Calculate the intrinsic value for American options
-                double stock_price = stockPrice(i, n);
-                double intrinsic_value = intrinsicValue(stock_price);
-                double continuation_value = (q * option_value_up + (1 - q) * option_value_down) / (1 + _interest_rate);
+
 
                 // Set the node value to the max of option value or intrinsic value for American options
-                if (_option->isAmericanOption() && intrinsic_value >= continuation_value) {
-                    _tree.setNode(n, i, intrinsic_value);
-                    _exerciseTree.setNode(n, i, false);
+                if (_option->isAmericanOption()) {
+                    // Calculate the intrinsic value for American options
+                    double stock_price = stockPrice(i, n);
+                    double intrinsic_value = intrinsicValue(stock_price);
+                    if (intrinsic_value >= option_value)
+                    {
+                        _tree.setNode(n, i, intrinsic_value);
+                        _exerciseTree.setNode(n, i, true);
+                    }
+                    else
+                    {
+                        _tree.setNode(n, i, option_value);
+                        _exerciseTree.setNode(n, i, false);
+                    }
+
                 }
                 else {
-                    _tree.setNode(n, i, continuation_value);
-                    _exerciseTree.setNode(n, i, false);
+                    _tree.setNode(n, i, option_value);
                 }
 
 

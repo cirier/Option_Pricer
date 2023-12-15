@@ -35,7 +35,7 @@ public:
 	// Implements the operator() method
 	double operator()(bool closed_form = false);
 
-	bool getExercise(int n, int i) ;
+	bool getExercise(int n, int i);
 
 	double intrinsicValue(double stock_price);
 
