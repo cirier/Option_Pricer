@@ -12,7 +12,7 @@ private:
 public:
     AmericanPutOption(double expiry, double strike);
     double payoff(double stockPrice) const override;
-    
+
 };
 
 #endif // AMERICANPUTOPTION_H

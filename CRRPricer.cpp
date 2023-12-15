@@ -37,11 +37,11 @@ CRRPricer::CRRPricer(Option* option, int depth, double asset_price, double up, d
 CRRPricer::CRRPricer(Option* option, int depth, double asset_price, double r, double volatility)
     : _option(option), _depth(depth), _asset_price(asset_price), _tree(depth), _exerciseTree(depth) {
     double h = option->getExpiry() / static_cast<double>(depth); // Time step
-    _up = exp((r - pow(volatility, 2) / 2) * (h + volatility * sqrt(h))) - 1;
-    _down = exp((r - pow(volatility, 2) / 2) * (h - volatility * sqrt(h))) - 1;
+    _up = exp((r + volatility * volatility / 2) * h + volatility * sqrt(h)) - 1;
+    _down = exp((r + volatility * volatility / 2) * h - volatility * sqrt(h)) - 1;
     _interest_rate = exp(r * h) - 1;
 
-    
+
 }
 
 BinaryTree<double> CRRPricer::getTree() const {
@@ -68,18 +68,21 @@ void CRRPricer::compute() {
                 double option_value = ((q * option_value_up) + ((1 - q) * option_value_down)) / (1 + _interest_rate);
 
                 // Calculate the intrinsic value for American options
-                double stock_price = _asset_price * pow(1 + _up, i) * pow(1 + _down, n - i);
-                double intrinsic_value = _option->payoff(stock_price);
+                double stock_price = stockPrice(i, n);
+                double intrinsic_value = intrinsicValue(stock_price);
+                double continuation_value = (q * option_value_up + (1 - q) * option_value_down) / (1 + _interest_rate);
 
                 // Set the node value to the max of option value or intrinsic value for American options
-                if (_option->isAmericanOption() && intrinsic_value > option_value) {
+                if (_option->isAmericanOption() && intrinsic_value >= continuation_value) {
                     _tree.setNode(n, i, intrinsic_value);
-                    _exerciseTree.setNode(n, i, true);
-                }
-                else {
-                    _tree.setNode(n, i, option_value);
                     _exerciseTree.setNode(n, i, false);
                 }
+                else {
+                    _tree.setNode(n, i, continuation_value);
+                    _exerciseTree.setNode(n, i, false);
+                }
+
+
             }
         }
 
@@ -131,10 +134,45 @@ double CRRPricer::operator()(bool closed_form) {
 }
 
 // Method to get the exercise condition from the tree
-bool CRRPricer::getExercise(int n, int i) const {
+bool CRRPricer::getExercise(int n, int i) {
     // Make sure to check the bounds before accessing the tree
     if (n < 0 || i < 0 || n > _depth || i > n) {
         throw std::invalid_argument("Invalid indices.");
     }
     return _exerciseTree.getNode(n, i);
+}
+
+
+#include <algorithm> // For max function
+
+// Function to calculate the intrinsic value of the option.
+// It will depend on the type of option (e.g., call or put) and other factors.
+double CRRPricer::intrinsicValue(double stock_price)
+{
+
+    return _option->payoff(stock_price);
+}
+
+// Function to calculate the continuation value
+/*double CRRPricer::continuationValue(double stock_price, double intrinsic, int n, int i, double q, double R, const BinaryTree<double>& optionTree) {
+    // Assuming optionTree is a 2D vector that contains option values at each node.
+
+    // Ensure we are not at the last step
+    if (n >= _depth - 1) {
+        throw std::invalid_argument("Cannot calculate continuation value at the final step");
+    }
+
+    // Calculate the expected option value for the next step
+    //double continuationUp = optionTree[n + 1][i + 1];
+    double continuationDown = optionTree[n + 1][i];
+    double continuationValue = (q * continuationUp + (1 - q) * continuationDown) / (1 + R);
+
+
+    // The continuation value is the maximum of the continuation value and the intrinsic value
+    return std::max(continuationValue, intrinsic);
+}
+*/
+double CRRPricer::stockPrice(double i, double n)
+{
+    return _asset_price * pow(1 + _up, i) * pow(1 + _down, n - i);
 }

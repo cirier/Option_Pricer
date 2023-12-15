@@ -35,7 +35,12 @@ public:
 	// Implements the operator() method
 	double operator()(bool closed_form = false);
 
-	bool getExercise(int n, int i) const;
+	bool getExercise(int n, int i) ;
 
+	double intrinsicValue(double stock_price);
+
+	//double continuationValue(double stock_price, double intrinsic, int n, int i, double q, double R, const BinaryTree<double>& optionTree);
+
+	double stockPrice(double i, double n);
 
 };
