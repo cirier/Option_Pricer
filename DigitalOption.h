@@ -1,7 +1,7 @@
 #pragma once
 #include "Option.h"
 
-enum class DigitalOptionType { call, put };
+
 
 class DigitalOption : public Option {
 protected:

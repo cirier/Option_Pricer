@@ -1,4 +1,3 @@
-
 #pragma once
 #include <iostream>
 #include "Option.h"
@@ -15,7 +14,7 @@ public:
 
     virtual optionType GetOptionType() const=0;
 
-    friend class VanillaCallOption;
-    friend class VanillaPutOption;
+    friend class CallOption;
+    friend class PutOption;
     friend class BlackScholesPricer;
 };

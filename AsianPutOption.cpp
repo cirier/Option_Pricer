@@ -1,7 +1,7 @@
 #include "AsianPutOption.h"
 
 
-AsianPutOption::AsianPutOption (double expiry, std::vector<double>_tk, double strike) : AsianOption(expiry, _tk){
+AsianPutOption::AsianPutOption (std::vector<double>_tk, double strike) : AsianOption(_tk,strike) {
 
 };
 double AsianPutOption::payoff(double Savg) {

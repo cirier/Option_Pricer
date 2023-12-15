@@ -1,6 +1,6 @@
 #include "Option.h"
 
-Option::Option(double expiry) : _expiry(expiry), _isAmerican(false) {}
+Option::Option(double expiry, bool isAmerican) : _expiry(expiry), _isAmerican(isAmerican) {}
 
 double Option::getExpiry() const {
     return _expiry;
@@ -13,7 +13,15 @@ bool Option::isAmericanOption() const {
 bool Option::getExercise(int n, int i) {
     return false;
 }
-
 bool Option::isAsianOption() {
     return false;
 }
+
+double Option::payoffPath(std::vector<double> S) const {
+	return payoff(S.back());
+}
+
+double Option::payoff(double S) const {
+	return 0;
+}
+

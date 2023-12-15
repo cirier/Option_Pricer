@@ -5,8 +5,8 @@
 #include <vector>
 
 
-AsianCallOption :: AsianCallOption(double expiry, std::vector<double>_tk, double strike) 
-    : AsianOption(expiry, _tk){}
+AsianCallOption :: AsianCallOption(std::vector<double>_tk, double strike) 
+    : AsianOption(_tk,strike) {}
 
 double AsianCallOption::payoff(double Savg) {
     return std::max(Savg - _strike, 0.0);
